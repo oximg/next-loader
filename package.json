@@ -1,6 +1,6 @@
 {
   "name": "@oximg/next-loader",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Next.js image loader for a self-hosted oximg server — move image optimization off Vercel/sharp and onto your own box.",
   "keywords": [
     "nextjs",
@@ -54,6 +54,9 @@
     "node": ">=18"
   },
   "packageManager": "pnpm@10.18.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown src/index.ts src/sign.ts --format esm,cjs --dts --platform node --clean --treeshake",
     "test": "vitest run",
