@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Honors the package's `engines.node: >=18`; the current LTS
+        # lines. Lint/typecheck/coverage are node-invariant, so one
+        # version runs them and the rest just prove the build imports.
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Lint, format, typecheck, and test with coverage
+        if: matrix.node == 22
+        run: pnpm run check
+      - name: Build
+        run: pnpm run build
+      - name: Smoke-test the built entry points
+        run: |
+          node --input-type=module -e '
+            import { createOximgLoader } from "@oximg/next-loader";
+            import { signResizePath } from "@oximg/next-loader/sign";
+            const url = createOximgLoader({ baseUrl: "https://img.example.com" })({ src: "/cat.jpg", width: 640 });
+            if (url !== "https://img.example.com/resize/640/8192/cat.jpg") throw new Error("loader URL mismatch: " + url);
+            const sig = signResizePath("/resize/640/8192/cat.jpg", { key: "0011", salt: "2233" });
+            if (sig !== "xT5I-pEUk6eJVevom0LuHaXLx7uDI0u43qU5C7MFPsA") throw new Error("signature mismatch: " + sig);
+            console.log("ok");
+          '
