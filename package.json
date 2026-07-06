@@ -55,7 +55,7 @@
   },
   "packageManager": "pnpm@10.18.0",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown src/index.ts src/sign.ts --format esm,cjs --dts --platform node --clean --treeshake",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
