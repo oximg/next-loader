@@ -1,6 +1,6 @@
 {
   "name": "@oximg/next-loader",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Next.js image loader for a self-hosted oximg server — move image optimization off Vercel/sharp and onto your own box.",
   "keywords": [
     "nextjs",
